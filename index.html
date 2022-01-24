@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body
+    style="display:flex; justify-content:center;background:lightblue; height: 100vh"
+  ></body>
+  <script>
+    let movements = [];
+
+    let moves = {
+      jump: [
+        [0, -45],
+        [0, -25],
+        [0, -10],
+        [0, -5],
+        [0, 0],
+        [0, 5],
+        [0, 10],
+        [0, 25],
+        [0, 45],
+      ],
+      up: [
+        [0, -10],
+        [0, -10],
+        [0, -5],
+      ],
+      down: [
+        [0, 10],
+        [0, 10],
+        [0, 5],
+      ],
+      left: [
+        [-10, 0],
+        [-10, 0],
+        [-5, 0],
+      ],
+      right: [
+        [10, 0],
+        [10, 0],
+        [5, 0],
+      ],
+    };
+
+    let elsaPos = [0, 0];
+
+    const canvas = document.createElement("canvas");
+    canvas.style.backgroundColor = "white";
+    canvas.width = document.documentElement.clientWidth * 0.8;
+    canvas.height = document.documentElement.clientHeight * 0.8;
+
+    var ctx = canvas.getContext("2d");
+
+    ctx.font = "20px Georgia";
+    ctx.fillText("Hello World!", 10, 50);
+
+    let renderActions = [renderFPS];
+
+    function renderElsa() {
+      let movementChange = movements.shift();
+      if (movementChange) {
+        elsaPos[0] += movementChange[0];
+        elsaPos[1] += movementChange[1];
+      }
+
+      ctx.drawImage(this, elsaPos[0], elsaPos[1]);
+    }
+
+    imgSnowflake = new Image();
+    imgSnowflake.src = "res/snowflake.png";
+
+    drawing = new Image();
+    drawing.src = "res/elsa.png"; // can also be a remote URL e.g. http://
+    drawing.onload = function() {
+      renderElsa = renderElsa.bind(drawing);
+      renderActions.unshift(renderElsa);
+
+      elsaPos[0] = 40;
+      elsaPos[1] = canvas.height / 2;
+    };
+
+    document.body.appendChild(canvas);
+
+    let lastFrame = performance.now();
+
+    let framelag = 0;
+    let framesRendered = 0;
+
+    class Shot {
+      startPos;dd
+      snoflakePos = [0, 0];
+      snowflakeMovements = [];
+
+      constructor(startPos) {
+        this.startPos = startPos;
+      }
+
+      shoot(done) {
+        this.snowflakePos = [this.startPos[0] + 50, this.startPos[1] + 55];
+        for (let i = 0; i < 80; i++) {
+          this.snowflakeMovements.push([i, 0]);
+        }
+
+        setTimeout(() => {
+          this.snowflakeMovements = [];
+          done();
+        }, 1000);
+
+        return this.renderSnowflake.bind(this);
+      }
+      renderSnowflake(ctx) {
+        let movementChange = this.snowflakeMovements.shift();
+        if (movementChange) {
+          console.log("wtf");
+          this.snowflakePos[0] += movementChange[0];
+          this.snowflakePos[1] += movementChange[1];
+        }
+
+        ctx.drawImage(imgSnowflake, this.snowflakePos[0], this.snowflakePos[1]);
+      }
+    }
+
+    function renderFPS() {
+      framesRendered++;
+
+      let thisFrame = performance.now();
+      if (framelag === 0) {
+        framelag = thisFrame - lastFrame;
+      } else {
+        framelag = (framelag + (thisFrame - lastFrame)) / 2;
+      }
+      let framesPerSec = Math.round(1000 / framelag);
+
+      lastFrame = performance.now();
+
+      ctx.fillText(framesPerSec, 10, 50);
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let action of renderActions) {
+        action(ctx);
+      }
+
+      window.requestAnimationFrame(loop);
+    }
+
+    window.requestAnimationFrame(loop);
+
+    let stepLength = 5;
+
+    // window.addEventListener('mousedown', e => {
+    //     switch(e.which) {
+    //         case 1:
+    //             let shot = new Shot(elsaPos).shoot(() => {
+    //             renderActions.splice(renderActions.indexOf(shot), 1);
+    //             });
+    //             break;
+    //         case 3:
+    //             movements = [...moves.jump];
+    //             break;
+
+    //     }
+        
+    // })
+    // window.addEventListener('contextmenu', e => e.preventDefault())
+    window.addEventListener("keydown", (e) => {
+      if (movements.length > 0) {
+        return;
+      }
+      switch (e.code) {
+        case "ArrowDown":
+          // movements = [...moves.down]
+          break;
+        case "AltLeft":
+          movements = [...moves.jump];
+          // movements = [...moves.up]
+          break;
+        case "KeyD":
+        case "ArrowRight":
+          movements = [...moves.right];
+          break;
+        case "KeyA":
+        case "ArrowLeft":
+          movements = [...moves.left];
+          break;
+        case "KeyS":
+        case "Space":
+          let shot = new Shot(elsaPos).shoot(() => {
+            renderActions.splice(renderActions.indexOf(shot), 1);
+          });
+          renderActions.push(shot);
+          // movements = [...moves.jump]
+          break;
+        default:
+          console.log(e.code);
+      }
+    });
+  </script>
+</html>
