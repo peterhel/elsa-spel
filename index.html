@@ -3,19 +3,28 @@
   <head>
     <style>
       body {
-        margin: 0;
-      }
+        display: flex;
+        align-content: center;
+        background: lightblue;
+        justify-content:center;
+        height: 100vh;
+        align-items: center;
+        margin:0
+    }
     </style>
   </head>
   <body
-    style="display:flex; justify-content:center;background:lightblue; height: 100vh"
+    
   ></body>
   <script>
     let movements = [];
-
+    let movementSpec = [0, 0]
     let moves = {
       jump: [
         [0, -45],
+        [0, -40],
+        [0, -35],
+        [0, -30],
         [0, -25],
         [0, -10],
         [0, -5],
@@ -23,6 +32,9 @@
         [0, 5],
         [0, 10],
         [0, 25],
+        [0, 30],
+        [0, 35],
+        [0, 40],
         [0, 45],
       ],
       up: [
@@ -51,8 +63,8 @@
 
     const canvas = document.createElement("canvas");
     canvas.style.backgroundColor = "white";
-    canvas.width = document.documentElement.clientWidth * 0.8;
-    canvas.height = document.documentElement.clientHeight * 0.8;
+    canvas.width = 640// document.documentElement.clientWidth * 0.8;
+    canvas.height = 480 //document.documentElement.clientHeight * 0.8;
 
     var ctx = canvas.getContext("2d");
 
@@ -62,10 +74,20 @@
     let renderActions = [renderFPS];
 
     function renderElsa() {
-      let movementChange = movements.shift();
+      let movementJump = movements.shift() || [0,0];
+
+      let movementChange = movementSpec;
       if (movementChange) {
-        elsaPos[0] += movementChange[0];
-        elsaPos[1] += movementChange[1];
+        elsaPos[0] += movementChange[0] + movementJump[0];
+        elsaPos[1] += movementChange[1] + movementJump[1];
+      }
+
+      if(elsaPos[0] > canvas.width/2) {
+        elsaPos[0] = canvas.width/2
+      }
+
+      if(elsaPos[0] < 0) {
+        elsaPos[0] = 0
       }
 
       ctx.drawImage(this, elsaPos[0], elsaPos[1]);
@@ -169,25 +191,37 @@
         
     // })
     // window.addEventListener('contextmenu', e => e.preventDefault())
-    window.addEventListener("keydown", (e) => {
-      if (movements.length > 0) {
-        return;
+    window.addEventListener("keyup", (e) => {
+      switch (e.code) {
+        case "KeyD":
+        case "ArrowRight":
+        case "KeyA":
+        case "ArrowLeft":
+          movementSpec = [0,0]
+
       }
+    })
+
+    window.addEventListener("keydown", (e) => {
       switch (e.code) {
         case "ArrowDown":
           // movements = [...moves.down]
           break;
         case "AltLeft":
+        case "ArrowUp":
+          if (movements.length > 0) {
+            return;
+          }
           movements = [...moves.jump];
           // movements = [...moves.up]
           break;
         case "KeyD":
         case "ArrowRight":
-          movements = [...moves.right];
+        movementSpec = [10,0]
           break;
         case "KeyA":
         case "ArrowLeft":
-          movements = [...moves.left];
+          movementSpec = [-10,0]
           break;
         case "KeyS":
         case "Space":
