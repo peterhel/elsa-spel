@@ -38,8 +38,8 @@
       ],
       up: [
         [0, -10],
-        [0, -10],
-        [0, -5],
+        // [0, -10],
+        // [0, -5],
       ],
       down: [
         [0, 10],
@@ -139,7 +139,7 @@
 
     hero.onload = () => {
       elsaPos[0] = 40;
-      elsaPos[1] = canvas.height - (hero.height + 10)
+      elsaPos[1] = canvas.height - (hero.height + 50)
     }
 
     let imgMonster = new Image();
@@ -258,35 +258,39 @@
     // })
     // window.addEventListener('contextmenu', e => e.preventDefault())
     window.addEventListener("keyup", (e) => {
-      switch (e.code) {
-        case "KeyD":
-        case "ArrowRight":
-        case "KeyA":
-        case "ArrowLeft":
-          movementSpec = [0, 0];
-      }
+      movementSpec = [0, 0];
+      // switch (e.code) {
+      //   case "KeyD":
+      //   case "ArrowRight":
+      //   case "KeyA":
+      //   case "ArrowLeft":
+      //   case "ArrowUp":
+      //   case "ArrowDown":
+      //     movementSpec = [0, 0];
+      // }
     });
 
     window.addEventListener("keydown", (e) => {
       switch (e.code) {
         case "ArrowDown":
+        movementSpec = [0,+5]
           // movements = [...moves.down]
           break;
         case "AltLeft":
         case "ArrowUp":
-          if (movements.length > 0) {
-            return;
-          }
-          movements = [...moves.jump];
-          // movements = [...moves.up]
+          // if (movements.length > 0) {
+          //   return;
+          // }
+          // movements = [...moves.jump];
+          movementSpec = [0,-5]
           break;
         case "KeyD":
         case "ArrowRight":
-          movementSpec = [10, 0];
+          movementSpec = [5, 0];
           break;
         case "KeyA":
         case "ArrowLeft":
-          movementSpec = [-10, 0];
+          movementSpec = [-5, 0];
           break;
         case "KeyS":
         case "Space":
