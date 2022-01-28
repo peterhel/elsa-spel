@@ -270,27 +270,86 @@
       // }
     });
 
+    function moveUp() {
+      movementSpec = [0,-5]
+
+    }
+    function moveDown() {
+      movementSpec = [0,+5]
+
+    }
+    function moveLeft() {
+      movementSpec = [-5, 0];
+
+    }
+    function moveRight() {
+      movementSpec = [5, 0];
+
+    }
+
+
+    let touchOrigin;
+    function handlemousemove(e) {
+      let [touch] = e.changedTouches;
+      let diffX = touchOrigin.clientX - touch.clientX; 
+      let diffY = touchOrigin.clientY - touch.clientY; 
+
+      // debugger;
+      window.removeEventListener('touchmove', handlemousemove)
+      if(Math.abs(diffX) > Math.abs(diffY)) {
+        if(diffX > 1) {
+        console.log('left')
+        moveLeft()
+      } else {
+        console.log('right')
+        moveRight()
+      }
+
+      }else {
+        if(diffY > 1) {
+        console.log('up')
+        moveUp()
+      } else {
+        console.log('down')
+        moveDown()
+      }
+
+      }
+    }
+
+    window.addEventListener('touchend', e=> {
+      console.log('touchend')
+      // stop moving
+      movementSpec = [0, 0];
+    });
+
+    window.addEventListener('touchstart', (e) => {
+      [touchOrigin] = e.touches
+      console.log('touchstart')
+      window.addEventListener('touchmove', handlemousemove)
+    })
+
     window.addEventListener("keydown", (e) => {
       switch (e.code) {
         case "ArrowDown":
-        movementSpec = [0,+5]
+        moveDown()
           // movements = [...moves.down]
           break;
         case "AltLeft":
         case "ArrowUp":
+          moveUp()
           // if (movements.length > 0) {
           //   return;
           // }
           // movements = [...moves.jump];
-          movementSpec = [0,-5]
           break;
         case "KeyD":
         case "ArrowRight":
-          movementSpec = [5, 0];
+          moveRight()
           break;
         case "KeyA":
         case "ArrowLeft":
-          movementSpec = [-5, 0];
+          moveLeft()
           break;
         case "KeyS":
         case "Space":

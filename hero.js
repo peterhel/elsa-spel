@@ -32,7 +32,7 @@ class Hero {
             // allow climb
             // if(movementJump[1] > 0 ) {
                 // env.movements =[]
-                console.log(pixelBelowFeet.join(','), ' solid')
+                // console.log(pixelBelowFeet.join(','), ' solid')
                 // movementJump = [0,0]
             // }
             // env.elsaPos[1] += movementChange[1]// + movementJump[1];
