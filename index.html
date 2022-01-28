@@ -73,6 +73,15 @@
 
     let renderActions = [renderFPS];
 
+    let moveBgLeft = false;
+    let moveBgRight = false
+
+    let viewportPos = [0,0]
+
+    function renderLevel() {
+      ctx.drawImage(imgLevel, viewportPos[0], viewportPos[1], 640, 480, 0, 0, 640, 480);
+    }
+
     function renderElsa() {
       let movementJump = movements.shift() || [0,0];
 
@@ -83,14 +92,22 @@
       }
 
       if(elsaPos[0] > canvas.width/2) {
-        elsaPos[0] = canvas.width/2
+        elsaPos[0] -= movementChange[0]
+        viewportPos[0] += movementChange[0]
       }
 
       if(elsaPos[0] < 0) {
-        elsaPos[0] = 0
+        elsaPos[0] -= movementChange[0]
+        viewportPos[0] += movementChange[0]
       }
 
       ctx.drawImage(this, elsaPos[0], elsaPos[1]);
+    }
+
+    imgLevel = new Image();
+    imgLevel.src = 'res/bana1.png';
+    imgLevel.onload = function() {
+      renderActions.unshift(renderLevel);
     }
 
     imgSnowflake = new Image();
@@ -100,7 +117,7 @@
     drawing.src = "res/elsa.png"; // can also be a remote URL e.g. http://
     drawing.onload = function() {
       renderElsa = renderElsa.bind(drawing);
-      renderActions.unshift(renderElsa);
+      renderActions.push(renderElsa);
 
       elsaPos[0] = 40;
       elsaPos[1] = canvas.height / 2;
