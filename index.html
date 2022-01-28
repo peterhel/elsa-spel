@@ -6,19 +6,17 @@
         display: flex;
         align-content: center;
         background: lightblue;
-        justify-content:center;
+        justify-content: center;
         height: 100vh;
         align-items: center;
-        margin:0
-    }
+        margin: 0;
+      }
     </style>
   </head>
-  <body
-    
-  ></body>
+  <body></body>
   <script>
     let movements = [];
-    let movementSpec = [0, 0]
+    let movementSpec = [0, 0];
     let moves = {
       jump: [
         [0, -45],
@@ -63,8 +61,8 @@
 
     const canvas = document.createElement("canvas");
     canvas.style.backgroundColor = "white";
-    canvas.width = 640// document.documentElement.clientWidth * 0.8;
-    canvas.height = 480 //document.documentElement.clientHeight * 0.8;
+    canvas.width = 640; // document.documentElement.clientWidth * 0.8;
+    canvas.height = 480; //document.documentElement.clientHeight * 0.8;
 
     var ctx = canvas.getContext("2d");
 
@@ -74,16 +72,26 @@
     let renderActions = [renderFPS];
 
     let moveBgLeft = false;
-    let moveBgRight = false
+    let moveBgRight = false;
 
-    let viewportPos = [0,0]
+    let viewportPos = [0, 0];
 
     function renderLevel() {
-      ctx.drawImage(imgLevel, viewportPos[0], viewportPos[1], 640, 480, 0, 0, 640, 480);
+      ctx.drawImage(
+        imgLevel,
+        viewportPos[0],
+        viewportPos[1],
+        640,
+        480,
+        0,
+        0,
+        640,
+        480
+      );
     }
 
     function renderElsa() {
-      let movementJump = movements.shift() || [0,0];
+      let movementJump = movements.shift() || [0, 0];
 
       let movementChange = movementSpec;
       if (movementChange) {
@@ -91,24 +99,36 @@
         elsaPos[1] += movementChange[1] + movementJump[1];
       }
 
-      if(elsaPos[0] > canvas.width/2) {
-        elsaPos[0] -= movementChange[0]
-        viewportPos[0] += movementChange[0]
+      if (elsaPos[0] > canvas.width / 2) {
+        if(viewportPos[0] > 6400-641) {
+          elsaPos[0] = canvas.width / 2;
+          viewportPos[0] = 6400-640;
+
+        }else {
+          elsaPos[0] -= movementChange[0];
+          viewportPos[0] += movementChange[0];
+
+        }
       }
 
-      if(elsaPos[0] < 0) {
-        elsaPos[0] -= movementChange[0]
-        viewportPos[0] += movementChange[0]
+      if (elsaPos[0] < 0) {
+        if (viewportPos[0] < 1) {
+          elsaPos[0] = 0;
+          viewportPos[0] = 0;
+        } else {
+          elsaPos[0] -= movementChange[0];
+          viewportPos[0] += movementChange[0];
+        }
       }
 
       ctx.drawImage(this, elsaPos[0], elsaPos[1]);
     }
 
     imgLevel = new Image();
-    imgLevel.src = 'res/bana1.png';
+    imgLevel.src = "res/bana1.png";
     imgLevel.onload = function() {
       renderActions.unshift(renderLevel);
-    }
+    };
 
     imgSnowflake = new Image();
     imgSnowflake.src = "res/snowflake.png";
@@ -131,7 +151,8 @@
     let framesRendered = 0;
 
     class Shot {
-      startPos;dd
+      startPos;
+      dd;
       snoflakePos = [0, 0];
       snowflakeMovements = [];
 
@@ -177,7 +198,11 @@
 
       lastFrame = performance.now();
 
-      ctx.fillText(framesPerSec, 10, 50);
+      ctx.fillText(
+        `${framesPerSec}, Elsa: ${elsaPos}, Viewport: ${viewportPos}`,
+        10,
+        50
+      );
     }
 
     function loop() {
@@ -205,7 +230,7 @@
     //             break;
 
     //     }
-        
+
     // })
     // window.addEventListener('contextmenu', e => e.preventDefault())
     window.addEventListener("keyup", (e) => {
@@ -214,10 +239,9 @@
         case "ArrowRight":
         case "KeyA":
         case "ArrowLeft":
-          movementSpec = [0,0]
-
+          movementSpec = [0, 0];
       }
-    })
+    });
 
     window.addEventListener("keydown", (e) => {
       switch (e.code) {
@@ -234,11 +258,11 @@
           break;
         case "KeyD":
         case "ArrowRight":
-        movementSpec = [10,0]
+          movementSpec = [10, 0];
           break;
         case "KeyA":
         case "ArrowLeft":
-          movementSpec = [-10,0]
+          movementSpec = [-10, 0];
           break;
         case "KeyS":
         case "Space":
