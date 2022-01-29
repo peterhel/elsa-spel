@@ -1,17 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="hero.js"></script>
+
+      <script src="hero.js"></script>
     <style>
+      html {
+        margin: 0;
+      }
       body {
+        user-select: none;
         display: flex;
         align-content: center;
         background: lightblue;
         justify-content: center;
         height: 100vh;
+        width: 100vw;
         align-items: center;
+        -webkit-touch-callout:none;
         margin: 0;
+        position:fixed;
       }
+      
     </style>
   </head>
   <body></body>
@@ -291,6 +300,8 @@
     let touchMoveAccRatio = .01
     let touchOrigin;
     function handlemousemove(e) {
+      e.preventDefault();
+      
       let [touch] = e.changedTouches;
       let diffX = touchOrigin.clientX - touch.clientX; 
       let diffY = touchOrigin.clientY - touch.clientY; 
@@ -327,7 +338,7 @@
 
     window.addEventListener('touchend', e=> {
             // debugger;
-            window.removeEventListener('touchmove', handlemousemove)
+            document.body.removeEventListener('touchmove', handlemousemove)
 
       console.log('touchend')
       // stop moving
@@ -337,7 +348,7 @@
     window.addEventListener('touchstart', (e) => {
       [touchOrigin] = e.touches
       console.log('touchstart')
-      window.addEventListener('touchmove', handlemousemove)
+      document.body.addEventListener('touchmove', handlemousemove)
     })
 
     window.addEventListener("keydown", (e) => {
