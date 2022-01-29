@@ -270,54 +270,65 @@
       // }
     });
 
-    function moveUp() {
-      movementSpec = [0,-5]
+    function moveUp(multiplier = 1) {
+      movementSpec = [0,-5 * multiplier]
 
     }
-    function moveDown() {
-      movementSpec = [0,+5]
+    function moveDown(multiplier = 1) {
+      movementSpec = [0,+5 * multiplier]
 
     }
-    function moveLeft() {
-      movementSpec = [-5, 0];
+    function moveLeft(multiplier = 1) {
+      movementSpec = [-5 * multiplier, 0];
 
     }
-    function moveRight() {
-      movementSpec = [5, 0];
+    function moveRight(multiplier = 1) {
+      movementSpec = [5 * multiplier, 0];
 
     }
 
-
+    let touchThresh = 5;
+    let touchMoveAccRatio = .01
     let touchOrigin;
     function handlemousemove(e) {
       let [touch] = e.changedTouches;
       let diffX = touchOrigin.clientX - touch.clientX; 
       let diffY = touchOrigin.clientY - touch.clientY; 
 
-      // debugger;
-      window.removeEventListener('touchmove', handlemousemove)
-      if(Math.abs(diffX) > Math.abs(diffY)) {
+      let absX = Math.abs(diffX)
+      let absY = Math.abs(diffY)
+
+      if([absX, absY].some(x => x < touchThresh)) {
+        movementSpec = [0, 0];
+        return;
+      }
+        
+
+      if(absX > absY) {
         if(diffX > 1) {
         console.log('left')
-        moveLeft()
+        moveLeft(absX * touchMoveAccRatio)
       } else {
         console.log('right')
-        moveRight()
+        moveRight(absX * touchMoveAccRatio)
       }
 
       }else {
         if(diffY > 1) {
         console.log('up')
-        moveUp()
+        moveUp(absY * touchMoveAccRatio)
       } else {
         console.log('down')
-        moveDown()
+        moveDown(absY * touchMoveAccRatio)
       }
 
       }
     }
 
     window.addEventListener('touchend', e=> {
+            // debugger;
+            window.removeEventListener('touchmove', handlemousemove)
+
       console.log('touchend')
       // stop moving
       movementSpec = [0, 0];
