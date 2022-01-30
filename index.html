@@ -7,6 +7,7 @@
       html {
         margin: 0;
       }
+
       body {
         user-select: none;
         display: flex;
@@ -20,11 +21,11 @@
         margin: 0;
         position:fixed;
       }
-      
     </style>
   </head>
   <body></body>
   <script>
+    let stepLength = 5;
     let movements = [];
     let movementSpec = [0, 0];
     let moves = {
@@ -144,11 +145,11 @@
     }
 
     let hero = new Hero();
-    renderActions.push(() => hero.render(ctx, {elsaPos, viewportPos, canvas, movements, movementSpec}))
+    renderActions.push(() => hero.render(ctx, {elsaPos, viewportPos, canvas, movements, movementSpec, stepLength}))
 
     hero.onload = () => {
       elsaPos[0] = 40;
-      elsaPos[1] = canvas.height - (hero.height + 50)
+      elsaPos[1] = 0// canvas.height - (hero.height + 50)
     }
 
     let imgMonster = new Image();
@@ -249,7 +250,7 @@
 
     window.requestAnimationFrame(loop);
 
-    let stepLength = 5;
+    // let stepLength = 5;
 
     // window.addEventListener('mousedown', e => {
     //     switch(e.which) {
@@ -267,6 +268,7 @@
     // })
     // window.addEventListener('contextmenu', e => e.preventDefault())
     window.addEventListener("keyup", (e) => {
+      // moveUp()
       movementSpec = [0, 0];
       // switch (e.code) {
       //   case "KeyD":
@@ -280,19 +282,19 @@
     });
 
     function moveUp(multiplier = 1) {
-      movementSpec = [0,-5 * multiplier]
+      movementSpec = [0,(stepLength * -1) * multiplier]
 
     }
     function moveDown(multiplier = 1) {
-      movementSpec = [0,+5 * multiplier]
+      movementSpec = [0,stepLength * multiplier]
 
     }
     function moveLeft(multiplier = 1) {
-      movementSpec = [-5 * multiplier, 0];
+      movementSpec = [(stepLength*-1) * multiplier, 0];
 
     }
     function moveRight(multiplier = 1) {
-      movementSpec = [5 * multiplier, 0];
+      movementSpec = [stepLength * multiplier, 0];
 
     }
 
@@ -337,7 +339,6 @@
     }
 
     window.addEventListener('touchend', e=> {
-            // debugger;
             document.body.removeEventListener('touchmove', handlemousemove)
 
       console.log('touchend')
@@ -353,8 +354,9 @@
 
     window.addEventListener("keydown", (e) => {
       switch (e.code) {
+        case "KeyS":
         case "ArrowDown":
-        moveDown()
+          moveDown()
           // movements = [...moves.down]
           break;
         case "AltLeft":
@@ -367,6 +369,7 @@
           break;
         case "KeyD":
         case "ArrowRight":
+          
           moveRight()
           break;
         case "KeyA":
