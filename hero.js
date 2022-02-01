@@ -6,8 +6,22 @@ function equals(arr1, arr2) {
     return true
 }
 
-const ladderTmpl = Uint8Array.from([255,0,0]);
-const freeFallTmpl = Uint8Array.from([0,0,0]);
+function arrayToInt(data /*[]*/) {
+    let  startIndex = 0;
+    let value = data[startIndex];
+
+    for (let i=1;i<data.length;i++)
+    {
+        value <<= 8;
+        value |= data[i+startIndex];
+    }
+
+    return value >>> 0;
+}
+
+const ladderMask = 0xff000000;
+const groundMask = 0xffff0000;
+const opacityMask = 0x000000ff;
 
 class Hero {
     constructor() {
@@ -32,50 +46,66 @@ class Hero {
         let pxHeroCenter =env.elsaPos[0] + (this.drawing.width/2);
         let pxHeroBottom = env.elsaPos[1] + this.drawing.height
 
-        let pixelAtFeet = ctx.getImageData(pxHeroCenter, pxHeroBottom, 1, 1).data;
-        // let pixelBelowFeet = ctx.getImageData(pxHeroCenter, pxHeroBottom + 1, 1, 1).data;
-
+        // let pxCurrent = arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom + 1, 1, 1).data);
         let i = 0;
-        let pxCurrent = ctx.getImageData(pxHeroCenter, pxHeroBottom+i, 1, 1).data;
 
-        console.log('movement',movementChange[0])
+        // console.log('movement',movementChange[0])
         if(movementChange[1] !== 0){
             let pm = movementChange[1] / Math.abs(movementChange[1])
-            while(equals(pxCurrent, ladderTmpl))
+            console.log(movementChange, pm > 0 ? 'down': 'up')
+
+            let feetZone = [
+                // arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom +movementChange[1], 1, 1).data),
+                arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom + 1*pm, 1, 1).data),
+                // arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom + 1, 1, 1).data)
+            ]
+                // let ladderValue = (pxCurrent & ladderMask) >>> 0;
+            // console.log('ladderValue', ladderValue)
+            while(feetZone.some(x => (x & ladderMask)>>>0 > 0))
             {
-                i+=1*pm
-                console.log('At ladder. Eg accept up/downwards movement')
-                pxCurrent = ctx.getImageData(pxHeroCenter, pxHeroBottom+Math.abs(i)+1, 1, 1).data;
-                // debugger
-                if(Math.abs(i) > Math.abs(env.stepLength))
+                i = i + 1
+                console.log('At ladder. Eg accept up/downwards movement. i: ', i, env.stepLength)
+                // pxCurrent = arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom+Math.abs(i), 1, 1).data);
+                feetZone = [
+                    // arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom + i, 1, 1).data),
+                    arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom + ((i + 1)*pm), 1, 1).data),
+                    // arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom + i + (1)*pm, 1, 1).data),
+                    // arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom + i + 1, 1, 1).data)
+                ]
+                        // debugger
+                if(i >= env.stepLength){
+                    console.log('reached stepLength')
                     break;
-                console.log(i, env.elsaPos[1], pxCurrent)
+                }
+                    
             }
-            
+            console.log('before', env.elsaPos[1])
+            env.elsaPos[1] += i*pm// + movementJump[1];
+            console.log('asfter', env.elsaPos[1])
         }
         
-        env.elsaPos[1] += i// + movementJump[1];
 
-        if(i === 0) {
-            pxCurrent = ctx.getImageData(pxHeroCenter, pxHeroBottom+i, 1, 1).data;
-            
-            while(equals(pxCurrent, freeFallTmpl)) {
-                i++;
-                console.log(i, 'not solid')
-                pxCurrent = ctx.getImageData(pxHeroCenter, pxHeroBottom+i, 1, 1).data;
-                if(i > env.stepLength)
-                    break;
-                console.log(i, env.elsaPos[1], pxCurrent)
-            }
-
+        let j = 0    
+        let pxCurrent = arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom+j, 1, 1).data);
+        let groundValue = (pxCurrent & groundMask) >>> 0;
+        // console.log('groundValue', groundValue);
+        while(groundValue === 0) {
+            console.log('falling')
+            j++;
+            // console.log(i, 'not solid')
+            pxCurrent = arrayToInt(ctx.getImageData(pxHeroCenter, pxHeroBottom+j, 1, 1).data);
+            groundValue = (pxCurrent & groundMask) >>> 0;
+            if(j > env.stepLength)
+                break;
+            // console.log(i, env.elsaPos[1], pxCurrent)
         }
+
     
-            env.elsaPos[1] += i
+    
+            env.elsaPos[1] += j
         
 
     // movementJump[1]= 10
-
-        console.log(pixelAtFeet)        
 
         if (movementChange) {
           env.elsaPos[0] += movementChange[0]// + movementJump[0];
