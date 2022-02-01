@@ -282,19 +282,19 @@
     });
 
     function moveUp(multiplier = 1) {
-      movementSpec = [0,(stepLength * -1) * multiplier]
+      movementSpec[1] = (stepLength * -1) * multiplier
 
     }
     function moveDown(multiplier = 1) {
-      movementSpec = [0,stepLength * multiplier]
+      movementSpec[1]=stepLength * multiplier
 
     }
     function moveLeft(multiplier = 1) {
-      movementSpec = [(stepLength*-1) * multiplier, 0];
+      movementSpec[0] = (stepLength*-1) * multiplier;
 
     }
     function moveRight(multiplier = 1) {
-      movementSpec = [stepLength * multiplier, 0];
+      movementSpec[0] = stepLength * multiplier;
 
     }
 
