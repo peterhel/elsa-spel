@@ -268,16 +268,17 @@
     // window.addEventListener('contextmenu', e => e.preventDefault())
     window.addEventListener("keyup", (e) => {
       // moveUp()
-      movementSpec = [0, 0];
-      // switch (e.code) {
-      //   case "KeyD":
-      //   case "ArrowRight":
-      //   case "KeyA":
-      //   case "ArrowLeft":
-      //   case "ArrowUp":
-      //   case "ArrowDown":
-      //     movementSpec = [0, 0];
-      // }
+      switch (e.code) {
+        case "KeyD":
+        case "ArrowRight":
+        case "KeyA":
+        case "ArrowLeft":
+          movementSpec[0] = 0;
+          break;
+        case "ArrowUp":
+        case "ArrowDown":
+          movementSpec[1] = 0;
+      }
     });
 
     function moveUp(multiplier = 1) {
