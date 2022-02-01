@@ -145,9 +145,9 @@
     }
 
     let hero = new Hero();
-    renderActions.push(() => hero.render(ctx, {elsaPos, viewportPos, canvas, movements, movementSpec, stepLength}))
 
     hero.onload = () => {
+      renderActions.push(() => hero.render(ctx, {elsaPos, viewportPos, canvas, movements, movementSpec, stepLength}))
       elsaPos[0] = 40;
       elsaPos[1] = 0// canvas.height - (hero.height + 50)
     }
@@ -210,7 +210,6 @@
       renderSnowflake(ctx) {
         let movementChange = this.snowflakeMovements.shift();
         if (movementChange) {
-          console.log("wtf");
           this.snowflakePos[0] += movementChange[0];
           this.snowflakePos[1] += movementChange[1];
         }
