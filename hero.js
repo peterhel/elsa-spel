@@ -59,16 +59,16 @@ class Hero {
     return this.drawing.height;
   }
 
-  lastPolarity = 1;
+  
 
   render(ctx, env) {
     let movementChange = env.movementSpec;
     let horizontalPolarity = movementChange[0] / Math.abs(movementChange[0]);
     if(isNaN(horizontalPolarity)) {
-        horizontalPolarity = this.lastPolarity;
+        horizontalPolarity = env.lastPolarity.get(lp);
     }
 
-    this.lastPolarity = horizontalPolarity
+    env.lastPolarity.set(lp, horizontalPolarity)
 
     let drawing = this.images[horizontalPolarity]
 
@@ -149,3 +149,5 @@ class Hero {
     );
   }
 }
+
+

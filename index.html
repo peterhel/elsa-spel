@@ -109,45 +109,13 @@
         480
       );
     }
-
-    function renderElsa() {
-      let movementJump = movements.shift() || [0, 0];
-
-      let movementChange = movementSpec;
-      if (movementChange) {
-        elsaPos[0] += movementChange[0] + movementJump[0];
-        elsaPos[1] += movementChange[1] + movementJump[1];
-      }
-
-      if (elsaPos[0] > canvas.width / 2) {
-        if(viewportPos[0] > 6400-641) {
-          elsaPos[0] = canvas.width / 2;
-          viewportPos[0] = 6400-640;
-
-        }else {
-          elsaPos[0] -= movementChange[0];
-          viewportPos[0] += movementChange[0];
-
-        }
-      }
-
-      if (elsaPos[0] < 0) {
-        if (viewportPos[0] < 1) {
-          elsaPos[0] = 0;
-          viewportPos[0] = 0;
-        } else {
-          elsaPos[0] -= movementChange[0];
-          viewportPos[0] += movementChange[0];
-        }
-      }
-
-      ctx.drawImage(this, elsaPos[0], elsaPos[1]);
-    }
-
+    var lp = {};
+    let lastPolarity = new WeakMap();
+    lastPolarity.set(lp, 1)
     let hero = new Hero();
 
     hero.onload = () => {
-      renderActions.push(() => hero.render(ctx, {elsaPos, viewportPos, canvas, movements, movementSpec, stepLength}))
+      renderActions.push(() => hero.render(ctx, {elsaPos,lastPolarity, viewportPos, canvas, movements, movementSpec, stepLength}))
       elsaPos[0] = 40;
       elsaPos[1] = 0// canvas.height - (hero.height + 50)
     }
@@ -189,13 +157,15 @@
       dd;
       snoflakePos = [0, 0];
       snowflakeMovements = [];
+      direction = 1;
 
-      constructor(startPos) {
+      constructor({elsaPos:startPos, lastPolarity}) {
         this.startPos = startPos;
+        this.direction = lastPolarity.get(lp);
       }
 
       shoot(done) {
-        this.snowflakePos = [this.startPos[0] + 50, this.startPos[1] + 55];
+        this.snowflakePos = [this.startPos[0] + 6 +(25*this.direction), this.startPos[1] + 20];
         for (let i = 0; i < 80; i++) {
           this.snowflakeMovements.push([i, 0]);
         }
@@ -210,7 +180,7 @@
       renderSnowflake(ctx) {
         let movementChange = this.snowflakeMovements.shift();
         if (movementChange) {
-          this.snowflakePos[0] += movementChange[0];
+          this.snowflakePos[0] += movementChange[0] * this.direction;
           this.snowflakePos[1] += movementChange[1];
         }
 
@@ -378,11 +348,10 @@
           break;
         case "KeyS":
         case "Space":
-          let shot = new Shot(elsaPos).shoot(() => {
+          let shot = new Shot({elsaPos, lastPolarity}).shoot(() => {
             renderActions.splice(renderActions.indexOf(shot), 1);
           });
           renderActions.push(shot);
-          // movements = [...moves.jump]
           break;
         default:
           console.log(e.code);
