@@ -25,9 +25,9 @@ class Hero {
 
   constructor() {
     let drawing = new Image();
-    drawing.src = "res/elsa.png";
+    drawing.src = "res/unicorn.png";
     let imgFlip = new Image();
-    imgFlip.src = "res/elsa_flip.png";
+    imgFlip.src = "res/unicorn_flip.png";
 
 
     let load1 = new Promise((resolve) => {
